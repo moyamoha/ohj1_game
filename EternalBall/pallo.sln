@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29728.190
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EternalBall", "EternalBall.csproj", "{58EEA52E-9EED-4B41-A25A-156649D5CB05}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{58EEA52E-9EED-4B41-A25A-156649D5CB05}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{58EEA52E-9EED-4B41-A25A-156649D5CB05}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{58EEA52E-9EED-4B41-A25A-156649D5CB05}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{58EEA52E-9EED-4B41-A25A-156649D5CB05}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {57E8A0F5-C979-4B3A-9278-DC776B3A8404}
+	EndGlobalSection
+EndGlobal
