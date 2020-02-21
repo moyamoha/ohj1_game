@@ -15,8 +15,7 @@ public class EternalBall : PhysicsGame
    // private PhysicsObject syotava;
     private PhysicsObject alaReuna;
     private Timer selviytymisAjanSuuruus;
-    private Timer tapahtumavali1;
-    private Timer tapahtumavali2;
+    private Timer[] lista;
     private PhysicsObject seina;
     private IntMeter pelaajanPisteet;
     private Vector nopeusOikealle = new Vector(200, 0);
@@ -31,9 +30,11 @@ public class EternalBall : PhysicsGame
         LuoKentta();
         LisaaLaskurit();
         AsetaOhjaimet();
-
-        tapahtumavali1 = LuoPutoavat(1, 1);
-        tapahtumavali2 = LuoPutoavat(0.9, 2);
+        lista = new Timer[] {
+            LuoPutoavat(1,"vaara"),
+            LuoPutoavat(1, "aarre")
+        };
+        
         
        
         
@@ -115,18 +116,18 @@ public class EternalBall : PhysicsGame
     /// </summary>
     /// <param name="aika"></param>
     /// <param name="tyyppi">1 on vaarat 2 on aarteet</param>
-    private Timer LuoPutoavat(double aika, int tyyppi)
+    private Timer LuoPutoavat(double aika, string tyyppi)
     {
         Timer aikavali = new Timer();
         aikavali.Interval = aika;
         switch(tyyppi)
         {
             
-            case 1:
+            case "vaara":
                 aikavali.Timeout += Piirravaarat;
                 
                 break;
-            case 2:
+            case "aarre":
                 aikavali.Timeout += PiirraAarteet;
                 break;
         }
@@ -196,8 +197,10 @@ public class EternalBall : PhysicsGame
             kohde.Destroy();
             tormaaja.Destroy();
             //selviytymisAika.Stop();
-            tapahtumavali1.Stop();
-            tapahtumavali2.Stop();
+            for (int i = 0; i < lista.Length;  i++)
+            {
+                lista[i].Stop();
+            }
             selviytymisAjanSuuruus.Pause();
             GameOverViesti();
             Keyboard.Listen(Key.Enter, ButtonState.Pressed, AloitaAlusta, "aloittaa uudestaan");
@@ -266,8 +269,10 @@ public class EternalBall : PhysicsGame
     {
         ClearAll(); // poistaa 
         LuoKentta();
-        LuoPutoavat(1.0, 1);
-        LuoPutoavat(1.0, 2);
+        lista = new Timer[] {
+            LuoPutoavat(1,"vaara"),
+            LuoPutoavat(1, "aarre")
+        };
         LisaaLaskurit();
         AsetaOhjaimet();
         
