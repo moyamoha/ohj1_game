@@ -101,7 +101,7 @@ public class EternalBall : PhysicsGame
     {
         const double sade = 30;
         Image[] hyvis = LoadImages("heart", "diamondblue", "goldcoin", "ruby");
-        PhysicsObject syotava = LuoOlio(this, sade, sade, RandomGen.NextDouble(Level.Left + seina.Width + 20, Level.Right - seina.Width - 20), Level.Top);
+        PhysicsObject syotava = LuoOlio(this, sade, sade, RandomGen.NextDouble(Level.Left + seina.Width + sade, Level.Right - seina.Width - sade), Level.Top);
         syotava.Image = hyvis[RandomGen.NextInt(hyvis.Length)];
         syotava.Restitution = 0;
         syotava.Tag = "syotava";
@@ -134,8 +134,6 @@ public class EternalBall : PhysicsGame
         aikavali.Start();
         return aikavali;
     }
-    
-   
    
 
     private void NappaaAarteet(PhysicsObject tormaaja, PhysicsObject kohde)
@@ -157,17 +155,24 @@ public class EternalBall : PhysicsGame
         Keyboard.Listen(Key.Right, ButtonState.Released, AsetaNopeus, null, pelaaja, Vector.Zero);
         Keyboard.Listen(Key.Left, ButtonState.Down, AsetaNopeus, null, pelaaja, nopeusVasemmalle);
         Keyboard.Listen(Key.Left, ButtonState.Released, AsetaNopeus, null, pelaaja, Vector.Zero);
-        
-        
-        
-
+        Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopettaa peli");
+        Keyboard.Listen(Key.P, ButtonState.Pressed, LaitaPauselle, "Laittaa pelin pauselle");
     }
+
+
+
+
     private void AsetaNopeus(PhysicsObject pallo, Vector nopeus)
     {
         pallo.Velocity = nopeus;
 
     }
     
+
+/// <summary>
+/// Lasketaan, kuinka pitkällä pelaaja selviää pelissä.
+/// </summary>
+/// <returns>selviytymisaika</returns>
     private Timer LaskeSelviytymisAika()
     {
         Timer selviytymisAika = new Timer();
@@ -187,6 +192,12 @@ public class EternalBall : PhysicsGame
         return selviytymisAika;
     }
 
+
+/// <summary>
+    /// Aliohjelma käsittelee törmäyksia. 
+    /// </summary>
+    /// <param name="tormaaja">Objekti, jonka käsittelystä ollaan kiinnostuneita</param>
+    /// <param name="kohde">Objekti, johon törmäys kohdistuu</param>
     private void KasitteleTormays(PhysicsObject tormaaja, PhysicsObject kohde)
     {
         
@@ -211,7 +222,13 @@ public class EternalBall : PhysicsGame
 
     }
 
-    
+
+/// <summary>
+    /// Luodaan pistelaskuri ja sen näyttö.
+    /// </summary>
+    /// <param name="x">pistelaskurin paikka pelialueella, sen x-koordinaatti</param>
+    /// <param name="y">pistelaskurin paikka pelialueella, sen y-koordinaatti</param>
+    /// <returns></returns>
     private IntMeter LaskePisteet(double x, double y)
     {
         IntMeter pisteLasku = new IntMeter(0);
@@ -228,14 +245,24 @@ public class EternalBall : PhysicsGame
         return pisteLasku;
     }
     
+
+    /// <summary>
+    /// Lisätään laskurit peliin, joita on selviytymislaskuri ja pistelaskuri
+    /// </summary>
     private void LisaaLaskurit()
     {
         pelaajanPisteet = LaskePisteet(Level.Left + 10, Level.Top - 10);
         selviytymisAjanSuuruus = LaskeSelviytymisAika();
     }
-    
-        
 
+
+    /// <summary>
+    /// Luodaan pelialueen molemmille puolelle seinät. 
+    /// </summary>
+    /// <param name="x">seinän x-koordinaatti</param>
+    /// <param name="y">seinä y-koordinaatti</param>
+    /// <param name="pituus">seinän pituus</param>
+    /// <param name="leveys">seinän levey</param>
     private void LuoSeina (double x, double y, double pituus, double leveys)
     {
         seina = PhysicsObject.CreateStaticObject (leveys, pituus, Shape.Rectangle);
@@ -245,8 +272,14 @@ public class EternalBall : PhysicsGame
         seina.Image = LoadImage("wall");
         Add(seina);
     }
-        
 
+
+    
+
+/// <summary>
+/// Luodaan näytölle viesti, kun pelaajan häviää ja näytetään hänen selviytymisajan
+/// suuruus ja kerättyjen pisteiden määrä
+/// </summary>
     private void GameOverViesti()
     {
         Label gameOver = new Label("Game Over \n" + "your score: " + pelaajanPisteet.Value + "\n" + "Your survival time: "
@@ -261,10 +294,22 @@ public class EternalBall : PhysicsGame
         
     }
 
-   
+/// <summary>
+/// Aliohjelma laittaa pelin pauselle
+/// </summary>
+    private void LaitaPauselle()
+    {
+        if (IsPaused == true)
+        {
+            IsPaused = false;
+        }
+        else IsPaused = true;
 
-  
+    }
 
+/// <summary>
+/// Tämä aliohjelma aloittaa pelin uudestaan.
+/// </summary>
     private void AloitaAlusta()
     {
         ClearAll(); // poistaa 
