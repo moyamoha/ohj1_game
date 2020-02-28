@@ -31,10 +31,8 @@ public class EternalBall : PhysicsGame
         lista.Add(LuoPutoavat(0.8, "vaara"));
         lista.Add(LuoPutoavat(2, "aarre"));
         lista.Add(LuoPutoavat(5, "superolio"));
-     
-            
-        Gravity = AsetaTaso(pelaajanPisteet.Value);
-    }
+        Gravity = new Vector(0, -200);
+     }
 
 
     private static PhysicsObject LuoOlio(Game peli, double olionLeveys, double olionPituus,
@@ -154,6 +152,7 @@ public class EternalBall : PhysicsGame
         if (kohde == pelaaja)
         {
             pelaajanPisteet.Value += 1;
+            Gravity = AsetaTaso(pelaajanPisteet.Value);
             tormaaja.Destroy();
         }
         if(kohde == alaReuna) tormaaja.Destroy();
@@ -274,7 +273,7 @@ public class EternalBall : PhysicsGame
     private void GameOverViesti()
     {
         Label gameOver = new Label("Game Over \n" + "your score: " + pelaajanPisteet.Value + "\n" + "Your survival time: "
-            + Convert.ToInt32(selviytymisAjanSuuruus.CurrentTime) + " s \n" + "Press Enter to continue");
+            + selviytymisAjanSuuruus.CurrentTime.ToString("F2") + " s \n" + "Press Enter to continue");
         gameOver.Position = new Vector(0, 0);
         gameOver.BorderColor = Color.Black;
         gameOver.Color = Color.BrightGreen;
@@ -336,6 +335,6 @@ public class EternalBall : PhysicsGame
         lista.Add(LuoPutoavat(2, "aarre"));
         lista.Add(LuoPutoavat(5, "superolio"));
 
-        Gravity = AsetaTaso(pelaajanPisteet.Value);
+        Gravity = new Vector(0, -200);
     }
 }
