@@ -22,6 +22,7 @@ public class EternalBall : PhysicsGame
 
     public override void Begin()
     {
+        
         LuoKentta();
         AsetaOhjaimet();
         pelaajanPisteet = LaskePisteet(Level.Left + sade, Level.Top - sade / 2);
@@ -309,11 +310,25 @@ public class EternalBall : PhysicsGame
     {
         Gravity = new Vector(0, 0);
         pelaajanpiste = pelaajanPisteet.Value;
-        if (pelaajanpiste < 10)
+        if (pelaajanpiste < 20)
         {
             Gravity = new Vector(0, -200);
+            MessageDisplay viesti = new MessageDisplay();
+            Add(viesti);
         }
-        else Gravity = new Vector(0, -1000);
+        if (pelaajanpiste < 40 && pelaajanpiste>= 20)
+        {
+            Gravity = new Vector(0, -400);
+            
+        }
+        if (pelaajanpiste < 60 && pelaajanpiste >= 40)
+        {
+            Gravity = new Vector(0, -600);
+        }
+        if (pelaajanpiste < 80 && pelaajanpiste >= 60) Gravity = new Vector(0, -800);
+        if (pelaajanpiste >= 80) Gravity = new Vector(0, -1000);
+
+        
         return Gravity;
     }
 
