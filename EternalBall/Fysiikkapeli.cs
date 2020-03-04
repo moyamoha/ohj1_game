@@ -119,9 +119,9 @@ public class EternalBall : PhysicsGame
 
 
     /// <summary>
-    /// Luodaan 
+    /// Luodaan putoavia esineitä tietyillä aikaväleillä.
     /// </summary>
-    /// <param name="aika"></param>
+    /// <param name="aika">se aika, jonka </param>
     /// <param name="tyyppi">1 on vaarat 2 on aarteet</param>
     private Timer LuoPutoavat(double aika, string tyyppi)
     {
@@ -182,7 +182,26 @@ public class EternalBall : PhysicsGame
         Keyboard.Listen(Key.Left, ButtonState.Down, AsetaNopeus, null, pelaaja, nopeusVasemmalle);
         Keyboard.Listen(Key.Left, ButtonState.Released, AsetaNopeus, null, pelaaja, Vector.Zero);
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopettaa peli");
-        Keyboard.Listen(Key.P, ButtonState.Pressed, LaitaPauselle, "Laittaa pelin pauselle");
+        Keyboard.Listen(Key.P, ButtonState.Pressed, delegate()
+        {
+            if (IsPaused == true)
+            {
+                IsPaused = false;
+                pauseViesti.Destroy();
+            }
+            else if (pelaaja.IsDestroyed == true) IsPaused = false;
+            else
+            {
+                IsPaused = true;
+                pauseViesti = new Label("Game is Paused. \nPress 'P' to continue");
+                pauseViesti.Position = new Vector(0, 0);
+                pauseViesti.BorderColor = Color.Black;
+                pauseViesti.Color = Color.BrightGreen;
+                Add(pauseViesti);
+            }
+        
+
+        }, "Laittaa pelin pauselle");
     }
 
 
@@ -283,52 +302,26 @@ public class EternalBall : PhysicsGame
     }
 
 
-/// <summary>
-/// Aliohjelma laittaa pelin pauselle
-/// </summary>
-    private void LaitaPauselle()
-    {
-        
-        if (IsPaused == true)
-        {
-            IsPaused = false;
-            pauseViesti.Destroy();
-        }
-        else if ( pelaaja.IsDestroyed == true) IsPaused = false;
-        else {
-            IsPaused = true;
-            pauseViesti = new Label("Game is Paused. \nPress 'P' to continue");
-            pauseViesti.Position = new Vector(0, 0);
-            pauseViesti.BorderColor = Color.Black;
-            pauseViesti.Color = Color.BrightGreen;
-            Add(pauseViesti);
-        }
-    }
-
-
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="pelaajanpiste"></param>
+    /// <returns></returns>
     private Vector AsetaTaso(int pelaajanpiste)
     {
         Gravity = new Vector(0, 0);
         pelaajanpiste = pelaajanPisteet.Value;
-        if (pelaajanpiste < 20)
-        {
-            Gravity = new Vector(0, -200);
-            MessageDisplay viesti = new MessageDisplay();
-            Add(viesti);
-        }
-        if (pelaajanpiste < 40 && pelaajanpiste>= 20)
-        {
-            Gravity = new Vector(0, -400);
-            
-        }
-        if (pelaajanpiste < 60 && pelaajanpiste >= 40)
-        {
-            Gravity = new Vector(0, -600);
-        }
+        //tason 1 vaikeus
+        if (pelaajanpiste < 20) Gravity = new Vector(0, -200);
+        //tason 2 vaikeus
+        if (pelaajanpiste < 40 && pelaajanpiste>= 20) Gravity = new Vector(0, -400);
+        //tason 3 vaikeus
+        if (pelaajanpiste < 60 && pelaajanpiste >= 40) Gravity = new Vector(0, -600);
+        //tason 4 vaikeus
         if (pelaajanpiste < 80 && pelaajanpiste >= 60) Gravity = new Vector(0, -800);
+        //tason 5 vaikeus (viimeinen taso)
         if (pelaajanpiste >= 80) Gravity = new Vector(0, -1000);
 
-        
         return Gravity;
     }
 
@@ -340,16 +333,6 @@ public class EternalBall : PhysicsGame
     private void AloitaAlusta()
     {
         ClearAll(); // poistaa 
-        LuoKentta();
-        AsetaOhjaimet();
-        pelaajanPisteet = LaskePisteet(Level.Left + sade, Level.Top - sade / 2);
-        selviytymisAjanSuuruus = LaskeSelviytymisAika();
-
-        lista = new List<Timer>();
-        lista.Add(LuoPutoavat(0.8, "vaara"));
-        lista.Add(LuoPutoavat(2, "aarre"));
-        lista.Add(LuoPutoavat(5, "superolio"));
-
-        Gravity = new Vector(0, -200);
+        Begin();
     }
 }
