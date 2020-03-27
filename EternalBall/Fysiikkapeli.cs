@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Jypeli;
 using Jypeli.Assets;
-using Jypeli.Controls;
-using Jypeli.Widgets;
-using Jypeli.Effects;
 
+
+/// <summary>
+/// Tehdään pallo peli EternalBall, 
+/// </summary>
 public class EternalBall : PhysicsGame
 {            
     private PhysicsObject PELAAJA;
@@ -22,9 +22,8 @@ public class EternalBall : PhysicsGame
     {       
         LuoKentta();
         AsetaOhjaimet();
-        PELAAJANPISTEET = LaskePisteet(Level.Left + SADE, Level.Top - SADE / 2);
+        PELAAJANPISTEET = LaskePisteet(Level.Left + SADE / 2, Level.Top - SADE / 2);
         SELVIYTYMISAIKA = LaskeSelviytymisAika();
-
         LISTA = new List<Timer>();
         LISTA.Add(LuoPutoavat(0.8, "vaara"));
         LISTA.Add(LuoPutoavat(2, "aarre"));
@@ -57,6 +56,8 @@ public class EternalBall : PhysicsGame
         Camera.ZoomToLevel();
         Level.CreateBorders();
         Level.BackgroundColor = Color.White;
+        MediaPlayer.Play("Stratosphere_Looping");
+        MediaPlayer.IsRepeating = true;
 
         ALAREUNA = new Surface(Level.Width, SADE);
         ALAREUNA.Position = new Vector(0, Level.Bottom + SADE /2);
@@ -77,7 +78,7 @@ public class EternalBall : PhysicsGame
         
         Image[] pahis = LoadImages("pommi", "bigbomb", "thinbomb", "skeleton", "grenade", "axe");
         PhysicsObject vaara = LuoOlio(this, SADE, SADE, 
-            RandomGen.NextDouble(Level.Left + 5*SADE / 2, Level.Right - 5* SADE /2),
+            RandomGen.NextDouble(Level.Left + 5 * SADE / 2, Level.Right - 5 * SADE / 2),
             Level.Top, Color.Black, pahis[RandomGen.NextInt(pahis.Length)]);
         this.Add(vaara);
         AddCollisionHandler(vaara, KasitteleVaaranTormays);
@@ -146,11 +147,10 @@ public class EternalBall : PhysicsGame
     /// <param name="kohde">Objekti, johon törmäys kohdistuu</param>
     private void KasitteleVaaranTormays(PhysicsObject tormaaja, PhysicsObject kohde)
     {
-
         if (kohde == PELAAJA)
         {
-            Explosion boom = new Explosion(tormaaja.Width);
-            Add(boom);
+            Explosion rajahdys = new Explosion(tormaaja.Width);
+            Add(rajahdys);
             kohde.Destroy();
             tormaaja.Destroy();
             for (int i = 0; i < LISTA.Count; i++)
@@ -164,7 +164,6 @@ public class EternalBall : PhysicsGame
                 Begin();
             }, "aloittaa uudestaan");
         }
-
         if (kohde == ALAREUNA) tormaaja.Destroy();
     }
 
@@ -179,8 +178,9 @@ public class EternalBall : PhysicsGame
     {
         if (kohde == PELAAJA)
         {
+            double tasoKerroin = 200;
             PELAAJANPISTEET.Value += 1;
-            Gravity = new Vector(0, -200 - 200 * (PELAAJANPISTEET.Value / 20)); 
+            Gravity = new Vector(0, -tasoKerroin -tasoKerroin * (PELAAJANPISTEET.Value / 20)); 
             tormaaja.Destroy();
         }
         if(kohde == ALAREUNA) tormaaja.Destroy();
@@ -280,7 +280,7 @@ public class EternalBall : PhysicsGame
     {
         IntMeter pisteLasku = new IntMeter(0);
         Label pistenaytto = new Label();
-        pistenaytto.Size = new Vector(20, 20);
+        pistenaytto.Size = new Vector(SADE, SADE);
         pistenaytto.TextColor = Color.Yellow;
         pistenaytto.Position = new Vector(x, y);
         pistenaytto.Color = Color.Black;
@@ -291,14 +291,13 @@ public class EternalBall : PhysicsGame
 
                     
 /// <summary>
-/// Luodaan näytölle viesti, kun pelaajan häviää ja näytetään hänen selviytymisajan
+/// Luodaan näytölle viesti, kun pelaaja häviää ja näytetään hänen selviytymisajan
 /// suuruus ja kerättyjen pisteiden määrä
 /// </summary>
     private void GameOverViesti()
     {
         Label gameOver = new Label("Game Over \n" + "your score: " + PELAAJANPISTEET.Value + "\n" + "Your survival time: "
             + SELVIYTYMISAIKA.CurrentTime.ToString("F2") + " s \n" + "Press Enter to continue");
-        gameOver.Position = new Vector(0, 0);
         gameOver.BorderColor = Color.Black;
         gameOver.Color = Color.BrightGreen;
         gameOver.TextColor = Color.Black;
