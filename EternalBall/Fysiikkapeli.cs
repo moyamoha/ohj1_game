@@ -4,7 +4,8 @@ using Jypeli.Assets;
 
 
 /// <summary>
-/// Tehdään pallo peli EternalBall, 
+/// Tehdään pallo peli EternalBall. Pelissä on tarkoitus kerätä pisteitä ja väistää vaaroja niin 
+/// kauan kun vaan pystyy. Pelissä on myös vaikeustasoja suhteessa pelaajan kerättyihin pisteisiin. 
 /// </summary>
 public class EternalBall : PhysicsGame
 {            
@@ -17,7 +18,9 @@ public class EternalBall : PhysicsGame
     private readonly double SADE = 40;
     
 
-
+    /// <summary>
+    /// Peli alkaa tästä aliohjelmasta, jossa kutsutaan muita aliohjelmia/funktioita
+    /// </summary>
     public override void Begin()
     {       
         LuoKentta();
@@ -31,7 +34,17 @@ public class EternalBall : PhysicsGame
         Gravity = new Vector(0, -200);
      }
 
-
+    /// <summary>
+    /// Luodaan pohja pelissä olevia esineita varten
+    /// </summary>
+    /// <param name="peli">Tämä peli</param>
+    /// <param name="olionLeveys">objektin leveys</param>
+    /// <param name="olionPituus">objektin pituus</param>
+    /// <param name="x">objektin x-koordinaatti</param>
+    /// <param name="y">objektin y-koordinaatti</param>
+    /// <param name="vari">objektin väri</param>
+    /// <param name="kuva">objektiin liitetty kuva</param>
+    /// <returns></returns>
     private static PhysicsObject LuoOlio(Game peli, double olionLeveys, double olionPituus,
         double x, double y, Color vari, Image kuva )
     {
@@ -118,8 +131,8 @@ public class EternalBall : PhysicsGame
     /// <summary>
     /// Luodaan putoavia esineitä tietyillä aikaväleillä.
     /// </summary>
-    /// <param name="aika">se aika, jonka </param>
-    /// <param name="tyyppi">1 on vaarat 2 on aarteet</param>
+    /// <param name="aika">aikaväli </param>
+    /// <param name="tyyppi">luotavan esineen tyyppi merkkijonona</param>
     private Timer LuoPutoavat(double aika, string tyyppi)
     {
         Timer aikavali = new Timer();
@@ -169,10 +182,10 @@ public class EternalBall : PhysicsGame
 
 
     /// <summary>
-    /// 
+    /// Käsitellään kerättävien esineiden törmäystilanteita.
     /// </summary>
-    /// <param name="tormaaja"></param>
-    /// <param name="kohde"></param>
+    /// <param name="tormaaja">Törmääjä (aarre)</param>
+    /// <param name="kohde">kohde, johon törmätään (pelaaja tai alareuna)</param>
     private void KasitteleAarteidenTormays(PhysicsObject tormaaja, PhysicsObject kohde)
 
     {
@@ -238,7 +251,7 @@ public class EternalBall : PhysicsGame
 
 
     /// <summary>
-    /// 
+    /// Asetetaan PELAAJALLE nopeus
     /// </summary>
     /// <param name="pallo"></param>
     /// <param name="nopeus"></param>
