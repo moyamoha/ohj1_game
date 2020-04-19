@@ -2,6 +2,8 @@
 using Jypeli;
 using Jypeli.Assets;
 
+/// @author  Mohamad Yahya Mohammad Javad
+/// @version 04.2020
 
 /// <summary>
 /// Tehdään pallo peli EternalBall. Pelissä on tarkoitus kerätä pisteitä ja väistää vaaroja niin 
@@ -9,13 +11,13 @@ using Jypeli.Assets;
 /// </summary>
 public class EternalBall : PhysicsGame
 {            
-    private PhysicsObject PELAAJA;
-    private PhysicsObject ALAREUNA;
-    private Timer SELVIYTYMISAIKA;
-    private List<Timer> LISTA;
-    private IntMeter PELAAJANPISTEET;
-    private Label PAUSEVIESTI;
-    private readonly double SADE = 40;
+    private PhysicsObject pelaaja;
+    private PhysicsObject alareuna;
+    private Timer selviytymisaika;
+    private List<Timer> luoOliotLista;
+    private IntMeter pelaajanPisteet;
+    private Label pysahtymisViesti;
+    private readonly double olionMitta = 40;
     
 
     /// <summary>
@@ -25,12 +27,12 @@ public class EternalBall : PhysicsGame
     {       
         LuoKentta();
         AsetaOhjaimet();
-        PELAAJANPISTEET = LaskePisteet(Level.Left + SADE / 2, Level.Top - SADE / 2);
-        SELVIYTYMISAIKA = LaskeSelviytymisAika();
-        LISTA = new List<Timer>();
-        LISTA.Add(LuoPutoavat(0.8, "vaara"));
-        LISTA.Add(LuoPutoavat(2, "aarre"));
-        LISTA.Add(LuoPutoavat(5, "superolio"));
+        pelaajanPisteet = LaskePisteet(Level.Left + olionMitta / 2, Level.Top - olionMitta / 2);
+        selviytymisaika = LaskeSelviytymisAika();
+        luoOliotLista = new List<Timer>();
+        luoOliotLista.Add(LuoPutoavat(0.8, "vaara"));
+        luoOliotLista.Add(LuoPutoavat(2, "aarre"));
+        luoOliotLista.Add(LuoPutoavat(5, "superolio"));
         Gravity = new Vector(0, -200);
      }
 
@@ -45,7 +47,7 @@ public class EternalBall : PhysicsGame
     /// <param name="vari">objektin väri</param>
     /// <param name="kuva">objektiin liitetty kuva</param>
     /// <returns></returns>
-    private static PhysicsObject LuoOlio(Game peli, double olionLeveys, double olionPituus,
+    private PhysicsObject LuoOlio(Game peli, double olionLeveys, double olionPituus,
         double x, double y, Color vari, Image kuva )
     {
         PhysicsObject olio = new PhysicsObject(olionLeveys, olionPituus, Shape.Circle);
@@ -53,7 +55,6 @@ public class EternalBall : PhysicsGame
         olio.X = x;
         olio.Color = vari;
         olio.Image = kuva;
-        peli.Add(olio);
         return olio;
     }
 
@@ -62,8 +63,7 @@ public class EternalBall : PhysicsGame
     /// seinät ja pelikentän asetukset mm. painovoima, pelikentän suuruus, taustaväri ...
     /// </summary>
     private void LuoKentta()
-    {
-        
+    {       
         SetWindowSize(600, 750);
         Level.Size = new Vector(600, 750);
         Camera.ZoomToLevel();
@@ -71,15 +71,14 @@ public class EternalBall : PhysicsGame
         Level.BackgroundColor = Color.White;
         MediaPlayer.Play("Stratosphere_Looping");
         MediaPlayer.IsRepeating = true;
-
-        ALAREUNA = new Surface(Level.Width, SADE);
-        ALAREUNA.Position = new Vector(0, Level.Bottom + SADE /2);
-        Add(ALAREUNA);
-
-        PELAAJA = LuoOlio(this, SADE, SADE, 0, ALAREUNA.Top + SADE, Color.Blue, null);
-        PELAAJA.Restitution = 0.0;
-        Add(PELAAJA);
-          
+        // Luodaan alareuna
+        alareuna = new Surface(Level.Width, olionMitta);
+        alareuna.Position = new Vector(0, Level.Bottom + olionMitta /2);
+        Add(alareuna);
+        // Luodaan pelaaja
+        pelaaja = LuoOlio(this, olionMitta, olionMitta, 0, alareuna.Top + olionMitta, Color.Blue, null);
+        pelaaja.Restitution = 0.0;
+        Add(pelaaja);          
     }
     
     
@@ -87,11 +86,10 @@ public class EternalBall : PhysicsGame
     /// AliOhjelma piirtää ne vaaralliset esineet
     /// </summary>
     private void Piirravaarat()
-    {
-        
+    {        
         Image[] pahis = LoadImages("pommi", "bigbomb", "thinbomb", "skeleton", "grenade", "axe");
-        PhysicsObject vaara = LuoOlio(this, SADE, SADE, 
-            RandomGen.NextDouble(Level.Left + 5 * SADE / 2, Level.Right - 5 * SADE / 2),
+        PhysicsObject vaara = LuoOlio(this, olionMitta, olionMitta, 
+            RandomGen.NextDouble(Level.Left + 5 * olionMitta / 2, Level.Right - 5 * olionMitta / 2),
             Level.Top, Color.Black, pahis[RandomGen.NextInt(pahis.Length)]);
         this.Add(vaara);
         AddCollisionHandler(vaara, KasitteleVaaranTormays);
@@ -104,8 +102,8 @@ public class EternalBall : PhysicsGame
     private void PiirraAarteet()
     {
         Image[] hyvis = LoadImages("diamondblue", "goldcoin", "ruby");
-        PhysicsObject aarre = LuoOlio(this, SADE, SADE,
-            RandomGen.NextDouble(Level.Left + 5 * SADE / 2, Level.Right - 5 * SADE / 2),
+        PhysicsObject aarre = LuoOlio(this, olionMitta, olionMitta,
+            RandomGen.NextDouble(Level.Left + 5 * olionMitta / 2, Level.Right - 5 * olionMitta / 2),
             Level.Top,
             Color.Black,
             hyvis[RandomGen.NextInt(hyvis.Length)]);
@@ -119,8 +117,8 @@ public class EternalBall : PhysicsGame
     /// </summary>
     private void PiirraAarreLaatikko()
     {
-        PhysicsObject superOlio = LuoOlio(this, SADE, SADE,
-            RandomGen.NextDouble(Level.Left + 5 * SADE / 2, Level.Right - 5 * SADE / 2),
+        PhysicsObject superOlio = LuoOlio(this, olionMitta, olionMitta,
+            RandomGen.NextDouble(Level.Left + 5 * olionMitta / 2, Level.Right - 5 * olionMitta / 2),
             Level.Top, Color.Black,
             LoadImage("treasure"));
         this.Add(superOlio);
@@ -153,6 +151,7 @@ public class EternalBall : PhysicsGame
         return aikavali;
     }
 
+
     /// <summary>
     /// Aliohjelma käsittelee vaarallisten esineiden törmäystilanteita. 
     /// </summary>
@@ -160,24 +159,24 @@ public class EternalBall : PhysicsGame
     /// <param name="kohde">Objekti, johon törmäys kohdistuu</param>
     private void KasitteleVaaranTormays(PhysicsObject tormaaja, PhysicsObject kohde)
     {
-        if (kohde == PELAAJA)
+        if (kohde == pelaaja)
         {
             Explosion rajahdys = new Explosion(tormaaja.Width);
             Add(rajahdys);
             kohde.Destroy();
             tormaaja.Destroy();
-            for (int i = 0; i < LISTA.Count; i++)
+            for (int i = 0; i < luoOliotLista.Count; i++)
             {
-                LISTA[i].Stop();
+                luoOliotLista[i].Stop();
             }
-            SELVIYTYMISAIKA.Stop();
-            GameOverViesti();
+            selviytymisaika.Stop();
+            NaytaGameOverViesti();
             Keyboard.Listen(Key.Enter, ButtonState.Pressed, delegate () {
                 ClearAll();
                 Begin();
             }, "aloittaa uudestaan");
         }
-        if (kohde == ALAREUNA) tormaaja.Destroy();
+        if (kohde == alareuna) tormaaja.Destroy();
     }
 
 
@@ -189,14 +188,14 @@ public class EternalBall : PhysicsGame
     private void KasitteleAarteidenTormays(PhysicsObject tormaaja, PhysicsObject kohde)
 
     {
-        if (kohde == PELAAJA)
+        if (kohde == pelaaja)
         {
             double tasoKerroin = 200;
-            PELAAJANPISTEET.Value += 1;
-            Gravity = new Vector(0, -tasoKerroin -tasoKerroin * (PELAAJANPISTEET.Value / 20)); 
+            pelaajanPisteet.Value += 1;
+            Gravity = new Vector(0, -tasoKerroin -tasoKerroin * (pelaajanPisteet.Value / 20)); 
             tormaaja.Destroy();
         }
-        if(kohde == ALAREUNA) tormaaja.Destroy();
+        if(kohde == alareuna) tormaaja.Destroy();
     }
 
 
@@ -207,12 +206,12 @@ public class EternalBall : PhysicsGame
     /// <param name="kohde"> Objekti, johon törmätään</param>
     private void KasitteleAarreLaatikonTormays(PhysicsObject tormaaja, PhysicsObject kohde)
     {
-        if (kohde == PELAAJA)
+        if (kohde == pelaaja)
         {
             tormaaja.Destroy();
-            PELAAJANPISTEET.Value += 3;            
+            pelaajanPisteet.Value += 3;            
         }
-        if (kohde == ALAREUNA) tormaaja.Destroy();
+        if (kohde == alareuna) tormaaja.Destroy();
     }
    
 
@@ -224,27 +223,27 @@ public class EternalBall : PhysicsGame
     {      
         Vector nopeusOikealle = new Vector(300, 0);
         Vector nopeusVasemmalle = new Vector(-300, 0);       
-        Keyboard.Listen(Key.Right, ButtonState.Down, AsetaNopeus, null, PELAAJA, nopeusOikealle);
-        Keyboard.Listen(Key.Right, ButtonState.Released, AsetaNopeus, null, PELAAJA, Vector.Zero);
-        Keyboard.Listen(Key.Left, ButtonState.Down, AsetaNopeus, null, PELAAJA, nopeusVasemmalle);
-        Keyboard.Listen(Key.Left, ButtonState.Released, AsetaNopeus, null, PELAAJA, Vector.Zero);
+        Keyboard.Listen(Key.Right, ButtonState.Down, AsetaNopeus, null, pelaaja, nopeusOikealle);
+        Keyboard.Listen(Key.Right, ButtonState.Released, AsetaNopeus, null, pelaaja, Vector.Zero);
+        Keyboard.Listen(Key.Left, ButtonState.Down, AsetaNopeus, null, pelaaja, nopeusVasemmalle);
+        Keyboard.Listen(Key.Left, ButtonState.Released, AsetaNopeus, null, pelaaja, Vector.Zero);
         Keyboard.Listen(Key.Escape, ButtonState.Pressed, ConfirmExit, "Lopettaa peli");
         Keyboard.Listen(Key.P, ButtonState.Pressed, delegate()
         {
             if (IsPaused == true)
             {
                 IsPaused = false;
-                PAUSEVIESTI.Destroy();
+                pysahtymisViesti.Destroy();
             }
-            else if (PELAAJA.IsDestroyed == true) IsPaused = false;
+            else if (pelaaja.IsDestroyed == true) IsPaused = false;
             else
             {
                 IsPaused = true;
-                PAUSEVIESTI = new Label("Game is Paused. \nPress 'P' to continue");
-                PAUSEVIESTI.Position = new Vector(0, 0);
-                PAUSEVIESTI.BorderColor = Color.Black;
-                PAUSEVIESTI.Color = Color.BrightGreen;
-                Add(PAUSEVIESTI);
+                pysahtymisViesti = new Label("Game is Paused. \nPress 'P' to continue");
+                pysahtymisViesti.Position = new Vector(0, 0);
+                pysahtymisViesti.BorderColor = Color.Black;
+                pysahtymisViesti.Color = Color.BrightGreen;
+                Add(pysahtymisViesti);
             }
         }, "Laittaa peliä pauselle");
     }
@@ -262,7 +261,7 @@ public class EternalBall : PhysicsGame
     
 
 /// <summary>
-/// Lasketaan, kuinka kauan PELAAJA selviää pelissä.
+/// Lasketaan, kuinka kauan pelaaja selviää pelissä.
 /// </summary>
 /// <returns>selviytymisaika</returns>
     private Timer LaskeSelviytymisAika()
@@ -272,10 +271,10 @@ public class EternalBall : PhysicsGame
         piste.TextColor = Color.Yellow;
         piste.Color = Color.Black;
         piste.BorderColor = Color.White;
-        piste.Size = new Vector(SADE, SADE);
+        piste.Size = new Vector(olionMitta, olionMitta);
         piste.BindTo(selviytymisAika.SecondCounter);
-        piste.X = Level.Right - SADE;
-        piste.Y = Level.Top - SADE / 2;
+        piste.X = Level.Right - olionMitta;
+        piste.Y = Level.Top - olionMitta / 2;
         piste.DecimalPlaces =2;
         Add(piste);
         selviytymisAika.Start();
@@ -291,15 +290,15 @@ public class EternalBall : PhysicsGame
     /// <returns></returns>
     private IntMeter LaskePisteet(double x, double y)
     {
-        IntMeter pisteLasku = new IntMeter(0);
-        Label pistenaytto = new Label();
-        pistenaytto.Size = new Vector(SADE, SADE);
-        pistenaytto.TextColor = Color.Yellow;
-        pistenaytto.Position = new Vector(x, y);
-        pistenaytto.Color = Color.Black;
-        pistenaytto.BindTo(pisteLasku);
-        Add(pistenaytto);
-        return pisteLasku;
+        IntMeter pisteLaskuri = new IntMeter(0);
+        Label pisteNaytto = new Label();
+        pisteNaytto.Size = new Vector(olionMitta, olionMitta);
+        pisteNaytto.TextColor = Color.Yellow;
+        pisteNaytto.Position = new Vector(x, y);
+        pisteNaytto.Color = Color.Black;
+        pisteNaytto.BindTo(pisteLaskuri);
+        Add(pisteNaytto);
+        return pisteLaskuri;
     }
 
                     
@@ -307,14 +306,15 @@ public class EternalBall : PhysicsGame
 /// Luodaan näytölle viesti, kun pelaaja häviää ja näytetään hänen selviytymisajan
 /// suuruus ja kerättyjen pisteiden määrä
 /// </summary>
-    private void GameOverViesti()
+    private void NaytaGameOverViesti()
     {
-        Label gameOver = new Label("Game Over \n" + "your score: " + PELAAJANPISTEET.Value + "\n" + "Your survival time: "
-            + SELVIYTYMISAIKA.CurrentTime.ToString("F2") + " s \n" + "Press Enter to continue");
+        Label gameOver = new Label("Game Over \n" + "your score: " + pelaajanPisteet.Value + "\n" + "Your survival time: "
+            + selviytymisaika.CurrentTime.ToString("F2") + " s \n" + "Press Enter to continue");
         gameOver.BorderColor = Color.Black;
         gameOver.Color = Color.BrightGreen;
         gameOver.TextColor = Color.Black;
         Add(gameOver);
     }
-     
+   
+    
 }
