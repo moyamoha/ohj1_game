@@ -6,8 +6,8 @@ using Jypeli.Assets;
 /// @version 04.2020
 
 /// <summary>
-/// Tehdään pallo peli EternalBall. Pelissä on tarkoitus kerätä pisteitä ja väistää vaaroja niin 
-/// kauan kun vaan pystyy. Pelissä on myös vaikeustasoja suhteessa pelaajan kerättyihin pisteisiin. 
+/// Tehdään pallopeli EternalBall. Pelissä on tarkoitus kerätä pisteitä ja väistää vaaroja niin 
+/// että selviää mahdollisimman pitkälle. Pelissä on myös vaikeustasoja suhteessa pelaajan kerättyihin pisteisiin. 
 /// </summary>
 public class EternalBall : PhysicsGame
 {            
