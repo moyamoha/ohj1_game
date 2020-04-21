@@ -4,7 +4,6 @@ using Jypeli.Assets;
 
 /// @author  Mohamad Yahya Mohammad Javad
 /// @version 04.2020
-
 /// <summary>
 /// Tehdään pallopeli EternalBall. Pelissä on tarkoitus kerätä pisteitä ja väistää vaaroja niin 
 /// että selviää mahdollisimman pitkälle. Pelissä on myös vaikeustasoja suhteessa pelaajan kerättyihin pisteisiin. 
@@ -36,6 +35,7 @@ public class EternalBall : PhysicsGame
         Gravity = new Vector(0, -200);
      }
 
+
     /// <summary>
     /// Luodaan pohja pelissä olevia esineita varten
     /// </summary>
@@ -46,7 +46,7 @@ public class EternalBall : PhysicsGame
     /// <param name="y">objektin y-koordinaatti</param>
     /// <param name="vari">objektin väri</param>
     /// <param name="kuva">objektiin liitetty kuva</param>
-    /// <returns></returns>
+    /// <returns> olio</returns>
     private PhysicsObject LuoOlio(Game peli, double olionLeveys, double olionPituus,
         double x, double y, Color vari, Image kuva )
     {
@@ -57,6 +57,7 @@ public class EternalBall : PhysicsGame
         olio.Image = kuva;
         return olio;
     }
+
 
     /// <summary>
     /// Luodaan pelikenttä, johon kuuluu pelaajan ohjattavissa oleva pallo, alareuna, 
@@ -131,6 +132,7 @@ public class EternalBall : PhysicsGame
     /// </summary>
     /// <param name="aika">aikaväli </param>
     /// <param name="tyyppi">luotavan esineen tyyppi merkkijonona</param>
+    /// <returns>aikaväli double-lukuna</returns>
     private Timer LuoPutoavat(double aika, string tyyppi)
     {
         Timer aikavali = new Timer();
@@ -252,18 +254,18 @@ public class EternalBall : PhysicsGame
     /// <summary>
     /// Asetetaan PELAAJALLE nopeus
     /// </summary>
-    /// <param name="pallo"></param>
-    /// <param name="nopeus"></param>
+    /// <param name="pallo">objekti, jonka nopeus säädellään (tässä tapauksessa pelaaja)</param>
+    /// <param name="nopeus">objektin nopeus vektorina</param>
     private void AsetaNopeus(PhysicsObject pallo, Vector nopeus)
     {
         pallo.Velocity = nopeus;
     }
     
 
-/// <summary>
-/// Lasketaan, kuinka kauan pelaaja selviää pelissä.
-/// </summary>
-/// <returns>selviytymisaika</returns>
+    /// <summary>
+    /// Lasketaan, kuinka kauan pelaaja selviää pelissä.
+    /// </summary>
+    /// <returns>selviytymisaika sekuntteina</returns>
     private Timer LaskeSelviytymisAika()
     {
         Timer selviytymisAika = new Timer();
@@ -282,12 +284,12 @@ public class EternalBall : PhysicsGame
     }
 
 
-/// <summary>
+    /// <summary>
     /// Luodaan pistelaskuri ja sen näyttö.
     /// </summary>
     /// <param name="x">pistelaskurin paikka pelialueella, sen x-koordinaatti</param>
     /// <param name="y">pistelaskurin paikka pelialueella, sen y-koordinaatti</param>
-    /// <returns></returns>
+    /// <returns>pistelaskuri, eli pelaajan sen hetkisen kerätyt pisteet</returns>
     private IntMeter LaskePisteet(double x, double y)
     {
         IntMeter pisteLaskuri = new IntMeter(0);
@@ -302,10 +304,10 @@ public class EternalBall : PhysicsGame
     }
 
                     
-/// <summary>
-/// Luodaan näytölle viesti, kun pelaaja häviää ja näytetään hänen selviytymisajan
-/// suuruus ja kerättyjen pisteiden määrä
-/// </summary>
+    /// <summary>
+    /// Luodaan näytölle viesti, kun pelaaja häviää ja näytetään hänen selviytymisajan
+    /// suuruus ja kerättyjen pisteiden määrä
+    /// </summary>
     private void NaytaGameOverViesti()
     {
         Label gameOver = new Label("Game Over \n" + "your score: " + pelaajanPisteet.Value + "\n" + "Your survival time: "
