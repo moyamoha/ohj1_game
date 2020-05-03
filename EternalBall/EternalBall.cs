@@ -236,11 +236,13 @@ public class EternalBall : PhysicsGame
             {
                 IsPaused = false;
                 pysahtymisViesti.Destroy();
+                MediaPlayer.Resume();
             }
             else if (pelaaja.IsDestroyed == true) IsPaused = false;
             else
             {
                 IsPaused = true;
+                MediaPlayer.Pause();
                 pysahtymisViesti = new Label("Game is Paused. \nPress 'P' to continue");
                 pysahtymisViesti.Position = new Vector(0, 0);
                 pysahtymisViesti.BorderColor = Color.Black;
